@@ -1,5 +1,5 @@
 from __future__ import print_function
-import time, playsound, os, pywhatkit
+import time, playsound, os, pywhatkit, random
 import speech_recognition as sr
 import pyttsx3, datetime, os.path, subprocess
 from googleapiclient.discovery import build
@@ -23,7 +23,7 @@ def get_audio():
         print("listening...")
         audio = r.listen(source)
         said = ""
-        # print("listening stoped")
+        print("wait!")
 
     try:
         said =r.recognize_google(audio)
@@ -31,10 +31,6 @@ def get_audio():
         return said.lower()
     except:
         pass
-        # return "I dont understand"
-        # except Exception as e:
-        #     print("Exception: " + str(e))
-
 
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 
@@ -173,54 +169,63 @@ def note(text):
         f.write(text)
     subprocess.Popen(["notepad.exe", file_name])
 
-WAKE = "hello"
+def get_random(res_list):
+    return random.sample(res_list, 1)[0]
+
+
 SERVICE = google_auth()
+
+GREETING_STRS = ["hi", 'hey', 'whats up', 'hai', 'hello', "you there"]
+INTRO_STRS = ["what should I call you", "your name", "who are you"]
+END_STRS = ["bye", "goodbye"]
+CALENDAR_STRINGS = ["plans on", "what do i have", "do i have plans", "am i busy", "events", "what's the plan on"]
+NOTE_STRS = ['make a note', 'write this down', 'remember this', "take a note"]
+WHAT_STRS = ["what is", "define", "definition"]
+
+NAME_LIST = ["You can call me Dora", "I am Dora", "I am Dora, How can I help you?"]
+GREETING_LIST = ["How can I help you?", "hi", 'hey', 'whats up', 'hello']
 
 while True:
     text = get_audio()
-    # if text.count(WAKE) > 0:
-    #     speak("How can I help you?")
-    #     text = get_audio()
-    # text = "what do i have on august 19"
 
-    GREETING_STRS = ["hi", 'hey', 'whats up']
-    END_STRS = ["bye", "goodbye"]
+    if text is not None:
 
-    if any(phrase in text for phrase in GREETING_STRS):
-        speak("How can I help you?")
 
-    CALENDAR_STRINGS = ["plans on", "what do i have", "do i have plans", "am i busy", "events"]
-    if any(phrase in text for phrase in CALENDAR_STRINGS):
-        date = get_date(text)
-        if date:
-            get_events(date, SERVICE)
-        else:
-            speak("I don't understand")
+        if any(phrase in text for phrase in GREETING_STRS):
+            speak(get_random(GREETING_LIST))
 
-    # text = "make a note"
-    NOTE_STRS = ['make a note', 'write this down', 'remember this', "take a note"]
-    if any(phrase in text for phrase in NOTE_STRS):
-        speak("What would you like me to write down?")
-        # note_text = "new thing to write down"
-        note_text = get_audio()
-        note(note_text)
-        speak("I have made a note for that.")
+        if any(phrase in text for phrase in INTRO_STRS):
+            speak(get_random(NAME_LIST))
 
-    WHAT_STRS = ["what is", "define", "definition"]
-    # text = "what is python"
-    if any(phrase in text for phrase in WHAT_STRS):
-        res = pywhatkit.info(text, return_value=True)
-        if res is not None:
-            speak("Accourding to wikipedia " + str(res))
-        else:
-            speak("I don't understand")
+        if any(phrase in text for phrase in CALENDAR_STRINGS):
+            date = get_date(text)
+            if date:
+                get_events(date, SERVICE)
+            else:
+                speak("I don't understand")
 
-    if "thank" in text:
-        speak("I am always happy to help you")
+        # text = "make a note"
+        if any(phrase in text for phrase in NOTE_STRS):
+            speak("What would you like me to write down?")
+            # note_text = "new thing to write down"
+            note_text = get_audio()
+            note(note_text)
+            speak("I have made a note for that.")
 
-    # if "I dont understand" in text:
-    #     speak("I dont understand")
+        # text = "what is python"
+        if any(phrase in text for phrase in WHAT_STRS):
+            res = pywhatkit.info(text, return_value=True)
+            if res is not None:
+                speak("Accourding to wikipedia " + str(res))
+            else:
+                speak("I don't understand")
 
-    if any(phrase in text for phrase in END_STRS):
-        speak("Bye!, have a nice day!")
-        break       
+        if "thank" in text:
+            speak("I am always happy to help you")
+
+        # if "I dont understand" in text:
+        #     speak("I dont understand")
+
+        if any(phrase in text for phrase in END_STRS):
+            speak("Bye!, have a nice day!")
+            break       
