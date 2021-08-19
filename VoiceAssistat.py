@@ -80,7 +80,7 @@ def get_events(day, service):
             start = start.strftime("%I:%M %p")
             end = end.strftime("%I:%M %p")
             speak(event['summary'] + f"from {start} to {end}")
-            print(event_date, start, end, event['summary'])
+            print(event_date, start," to ", end, event['summary'])
 
 def create_events(service):
     event = {
