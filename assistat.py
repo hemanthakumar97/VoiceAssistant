@@ -1,5 +1,6 @@
 from __future__ import print_function
 import time, playsound, os, pywhatkit, random
+from pyjokes import get_jokes
 import speech_recognition as sr
 import pyttsx3, datetime, os.path, subprocess
 from googleapiclient.discovery import build
@@ -172,16 +173,21 @@ def note(text):
 def get_random(res_list):
     return random.sample(res_list, 1)[0]
 
+def joke():
+    return get_jokes("en")
 
 SERVICE = google_auth()
 
 GREETING_STRS = ["hi", 'hey', 'whats up', 'hai', 'hello', "you there"]
 INTRO_STRS = ["what should I call you", "your name", "who are you"]
 END_STRS = ["bye", "goodbye"]
+TIME_STRS = ["current time", "time now"]
 CALENDAR_STRINGS = ["plans on", "what do i have", "do i have plans", "am i busy", "events", "what's the plan on"]
 NOTE_STRS = ['make a note', 'write this down', 'remember this', "take a note"]
 WHAT_STRS = ["what is", "define", "definition"]
+JOKE_STRS = ["tell me a joke",]
 
+# RESPONSE LISTS
 NAME_LIST = ["You can call me Dora", "I am Dora", "I am Dora, How can I help you?"]
 GREETING_LIST = ["How can I help you?", "hi", 'hey', 'whats up', 'hello']
 
@@ -194,10 +200,18 @@ while True:
         if any(phrase in text for phrase in GREETING_STRS):
             speak(get_random(GREETING_LIST))
 
-        if any(phrase in text for phrase in INTRO_STRS):
+        elif any(phrase in text for phrase in INTRO_STRS):
             speak(get_random(NAME_LIST))
 
-        if any(phrase in text for phrase in CALENDAR_STRINGS):
+        elif any(phrase in text for phrase in TIME_STRS):
+            current_time = datetime.datetime.now()
+            current_time = current_time.strftime("%I:%M %p")
+            speak("Current time is : " + str(current_time))
+
+        elif any(phrase in text for phrase in JOKE_STRS):
+            speak(get_random(get_jokes("en")))
+
+        elif any(phrase in text for phrase in CALENDAR_STRINGS):
             date = get_date(text)
             if date:
                 get_events(date, SERVICE)
@@ -205,7 +219,7 @@ while True:
                 speak("I don't understand")
 
         # text = "make a note"
-        if any(phrase in text for phrase in NOTE_STRS):
+        elif any(phrase in text for phrase in NOTE_STRS):
             speak("What would you like me to write down?")
             # note_text = "new thing to write down"
             note_text = get_audio()
@@ -213,19 +227,19 @@ while True:
             speak("I have made a note for that.")
 
         # text = "what is python"
-        if any(phrase in text for phrase in WHAT_STRS):
+        elif any(phrase in text for phrase in WHAT_STRS):
             res = pywhatkit.info(text, return_value=True)
             if res is not None:
                 speak("Accourding to wikipedia " + str(res))
             else:
                 speak("I don't understand")
 
-        if "thank" in text:
+        elif "thank" in text:
             speak("I am always happy to help you")
 
         # if "I dont understand" in text:
         #     speak("I dont understand")
 
-        if any(phrase in text for phrase in END_STRS):
+        elif any(phrase in text for phrase in END_STRS):
             speak("Bye!, have a nice day!")
             break       
