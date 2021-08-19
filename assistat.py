@@ -179,7 +179,7 @@ def joke():
 SERVICE = google_auth()
 
 GREETING_STRS = ["hi", 'hey', 'whats up', 'hai', 'hello', "you there"]
-INTRO_STRS = ["what should I call you", "your name", "who are you"]
+INTRO_STRS = ["what should i call you", "your name", "who are you"]
 END_STRS = ["bye", "goodbye"]
 TIME_STRS = ["current time", "time now"]
 CALENDAR_STRINGS = ["plans on", "what do i have", "do i have plans", "am i busy", "events", "what's the plan on"]
@@ -218,15 +218,12 @@ while True:
             else:
                 speak("I don't understand")
 
-        # text = "make a note"
         elif any(phrase in text for phrase in NOTE_STRS):
             speak("What would you like me to write down?")
-            # note_text = "new thing to write down"
             note_text = get_audio()
             note(note_text)
             speak("I have made a note for that.")
 
-        # text = "what is python"
         elif any(phrase in text for phrase in WHAT_STRS):
             res = pywhatkit.info(text, return_value=True)
             if res is not None:
@@ -236,9 +233,6 @@ while True:
 
         elif "thank" in text:
             speak("I am always happy to help you")
-
-        # if "I dont understand" in text:
-        #     speak("I dont understand")
 
         elif any(phrase in text for phrase in END_STRS):
             speak("Bye!, have a nice day!")
